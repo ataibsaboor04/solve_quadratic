@@ -1,4 +1,6 @@
 import sys
+from math import gcd
+
 print("Type your quadratic equation")
 print("Write equation of form: ax2 + bx + c = 0")
 print("For example, x2 + 2x + 7 = 0")
@@ -37,14 +39,16 @@ if a == 1: s = ''
 if b == 1: t = ''
 
 print(f"\n{s}x2 + {t}x + {c} = 0")
-for i in range(20):
-    for j in range(20):
-        if i*j == a*c and i+j == b:
-            b1 = i
-            b2 = j
-            break
+def split_middle_term(a, b, c):
+    for i in range(20):
+        for j in range(20):
+            if i*j == a*c and i+j == b:
+                b1 = i
+                b2 = j
+                return b1, b2
 
 try:
+    b1, b2 = split_middle_term(a, b, c)
     t1 = b1
     t2 = b2
 except:
@@ -56,4 +60,19 @@ if b2 == 1: t2 = ''
 
 print(f"\n{s}x2 + {t1}x + {t2}x + {c} = 0")
 
-# print(f"{n}x() + {n}")
+n1 = gcd(a, b1)
+n2 = gcd(c, b2)
+
+s1 = int(a/n1)
+s2 = int(b1/n1)
+t1 = int(b2/n2)
+t2 = int(c/n2)
+
+if n1 == 1: n1 = ''
+if n2 == 1: n2 = ''
+if s1 == 1: s1 = ''
+if s2 == 1: s2 = ''
+if t1 == 1: t1 = ''
+if t2 == 1: t2 = ''
+
+print(f"\n{n1}x({s1}x + {s2}) + {n2}({t1}x + {t2}) = 0")
