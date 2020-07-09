@@ -1,3 +1,4 @@
+import sys
 print("Type your quadratic equation")
 print("Write equation of form: ax2 + bx + c = 0")
 print("For example, x2 + 2x + 7 = 0")
@@ -32,10 +33,8 @@ def find_const(eq):
 
 a, b, c = find_const(eq)
 s, t = a, b
-if a == 1:
-    s = ''
-if b == 1:
-    t = ''
+if a == 1: s = ''
+if b == 1: t = ''
 
 print(f"\n{s}x2 + {t}x + {c} = 0")
 for i in range(20):
@@ -45,12 +44,15 @@ for i in range(20):
             b2 = j
             break
 
-t1 = b1
-t2 = b2
-if b1 == 1:
-    t1 = ''
-if b2 == 1:
-    t2 = ''
+try:
+    t1 = b1
+    t2 = b2
+except:
+    print("I can't solve your equation. Sorry!!")
+    sys.exit()
+
+if b1 == 1: t1 = ''
+if b2 == 1: t2 = ''
 
 print(f"\n{s}x2 + {t1}x + {t2}x + {c} = 0")
 
