@@ -88,14 +88,23 @@ class Quadratic_equation(object):
         print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
 
     def quad_method(self):
+        """
+        This method tries to solve the equation using Quadratic Formula Method.
+        """
         pass
 
     def midd_method(self):
+        """
+        This method tries to solve the equation using Middle Term Break Method.
+        """
         pass
 
     def sqre_method(self):
+        """
+        This method tries to solve the equation using Completing Squares Method.
+        """
         pass
-        
+
     def solve(self):
         """
         Solve the quadratic equation with the specified method.
