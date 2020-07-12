@@ -1,109 +1,135 @@
 import sys
 from math import gcd
 
-print("Type your quadratic equation")
-print("Write equation of form: ax2 + bx + c = 0")
-print("For example, x2 + 2x + 7 = 0")
-eq = input("Equation: ")
-
-def find_const(eq):
+def print_info():
     """
-    Take an equation of form: ax2 + bx + c = 0 and return the constants.
-    Input: Equation
-    Returns: a, b, c
+    Print out the basic information for the user to use the program.
     """
-    lhs, rhs = eq.split('=')
-    if rhs.strip() == '0' and '-' not in lhs:
-        vals = lhs.split('+')
-        for x in vals:
-            if 'x2' in x.strip():
-                if len(x.strip()) == 2:
-                    a = 1
-                else:
-                    a = int(x[:x.index('x2')])
-            elif 'x' in x.strip():
-                if len(x.strip()) == 1:
-                    b = 1
-                else:
-                    b = int(x[:x.index('x')])
-            elif x.strip().isnumeric():
-                c = int(x)
-    else:
-        print("Please type equation in the form:")
-        print("ax2 + bx + c = 0")
-    return a, b, c
+    print("Solve your quadratic equation easily.")
+    print("Write equation of form: ax2 + bx + c = 0")
+    print("For example, x2 + 6x + 8 = 0")
+    print("Note: DONT USE BRACKETS\n")
 
-def split_middle_term(a, b, c):
-    for i in range(20):
-        for j in range(20):
-            if i*j == a*c and i+j == b:
-                b1 = i
-                b2 = j
-                return b1, b2
 
-def quadratic_equation():
-    print("\n"+"-"*30)
-    print("Quadratic Equation Method")
-    print("-"*30)
+def take_input():
+    """
+    Take the equation and the method of solution as input and check if the input is valid.
+    """
+    # Take the equation and method of solution as input from user
+    eq = input("Enter your Equation: ")
+    print("Specify your method by which you want to solve your equation.\n1. 'quad' for Quadratic formula method\n2. 'midd' for Middle term break method\n3. 'sqre' for Completing square method")
+    method = input("Enter you Method: ")
 
-    print("")
+    # Conditions for input to be valid
 
-def solve_the_equation():
-    print("-"*30)
-    print("Middle Term Break Method")
-    print("-"*30)
-    a, b, c = find_const(eq)
-    s, t = a, b
-    if a == 1: s = ''
-    if b == 1: t = ''
+    # check for brackets in the equation
+    if "(" in eq or "{" in eq or "[" in eq:
+        print("\nDON'T USE BRACKETS!!")
+        take_input()
 
-    print(f"\n{s}x2 + {t}x + {c} = 0")
+    # check if equation has more than one variable
+    for i in eq:
+        if i.isalpha():
+            variable = i
+            break
+    for i in eq:
+        if i.isalpha() and variable != i:
+            print("\nENTER A QUADRATIC EQUATION!!")
+            take_input()
 
-    try:
-        b1, b2 = split_middle_term(a, b, c)
-        t1 = b1
-        t2 = b2
-    except:
-        print("Sorry!! This cant be solved through the middle term break method.")
-        sys.exit()
-    if b1 == 1: t1 = ''
-    if b2 == 1: t2 = ''
+    # check if its a equation
+    if '+' not in eq and '-' not in eq:
+        print("\nENTER A VALID QUADRATIC EQUATION!!")
+        print_info()
+        take_input()
 
-    print(f"\n{s}x2 + {t1}x + {t2}x + {c} = 0")
+    return eq, variable, method
 
-    n1 = gcd(a, b1)
-    n2 = gcd(c, b2)
+class Quadratic_equation(object):
+    """docstring for Quadratic."""
 
-    s1 = int(a/n1)
-    s2 = int(b1/n1)
-    t1 = int(b2/n2)
-    t2 = int(c/n2)
+    def __init__(self, equation, variable, method):
+        self.equation = equation
+        self.variable = variable
+        self.method = method
 
-    if n1 == 1: n1 = ''
-    if n2 == 1: n2 = ''
-    if s1 == 1: s1 = ''
-    if s2 == 1: s2 = ''
-    if t1 == 1: t1 = ''
-    if t2 == 1: t2 = ''
+    def constants(self):
+        """
+        Take an equation of form: ax2 + bx + c = 0 and return the constants.
+        Parameter: Equation
+        Return: a, b, c
+        """
+        lhs, rhs = self.equation.split('=')
+        if rhs.strip() == '0':
+            vals = lhs.split('+')
+            for x in vals:
+                if 'x2' in x.strip():
+                    if len(x.strip()) == 2:
+                        a = 1
+                    else:
+                        a = int(x[:x.index('x2')])
+                elif 'x' in x.strip():
+                    if len(x.strip()) == 1:
+                        b = 1
+                    else:
+                        b = int(x[:x.index('x')])
+                elif x.strip().isnumeric():
+                    c = int(x)
+        else:
+            print("Please type equation in the form:")
+            print("ax2 + bx + c = 0")
+        return a, b, c
 
-    print(f"\n{n1}x({s1}x + {s2}) + {n2}({t1}x + {t2}) = 0")
+    def print_coefficients(self):
+        """
+        This method prints out the coefficients and constant in the equation.
+        """
+        a, b, c = self.constants()
+        print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
 
-    if f"({s1}x + {s2})" == f"({t1}x + {t2})":
-        print(f"\n({n1}x + {n2}).({s1}x + {s2}) = 0")
+    def quad_method(self):
+        """
+        This method tries to solve the equation using Quadratic Formula Method.
+        """
+        pass
 
-    print("\nEither"+" "*10+"Or")
-    p = f"\n{n1}x + {n2} = 0"
-    q = f"{s1}x + {s2} = 0"
-    print(p+" "*(18-len(p))+q)
-    p = f"\n{n1}x = - {n2}"
-    q = f"{s1}x = - {s2}"
-    print(p+" "*(18-len(p))+q)
-    if n1 != "":
-        p = f"\nx = - {n2}/{n1}"
-    if s1 != "":
-        q = f"x = - {s2}/{s1}"
-        print(p+" "*(18-len(p))+q)
-    print("\n"+"-"*30)
-    print("\t\t\tSolved")
+    def midd_method(self):
+        """
+        This method tries to solve the equation using Middle Term Break Method.
+        """
+        '√'
+        pass
 
-solve_the_equation()
+    def sqre_method(self):
+        """
+        This method tries to solve the equation using Completing Squares Method.
+        """
+        pass
+
+    def solve(self):
+        """
+        Solve the quadratic equation with the specified method.
+        """
+        pass
+        # if self.method == 'quad':
+        #     quad_method()
+        # elif self.method == 'midd':
+        #     midd_method()
+        # elif self.method == 'sqre':
+        #     sqre_method()
+
+def main():
+    print_info()
+    intention = 'y'
+    while intention.lower().strip() == 'y':
+        print()
+        eq, var, method = take_input()
+        equation = Quadratic_equation(eq, var, method)
+        equation.solve()
+        print("\nEnter 'y' to solve another, or 'q' for quit.")
+        intention = input("y/q: ")
+    sys.exit()
+
+
+if __name__ == '__main__':
+    main()
