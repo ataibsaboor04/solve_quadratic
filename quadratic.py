@@ -8,8 +8,7 @@ def print_info():
     print("Solve your quadratic equation easily.")
     print("Write equation of form: ax2 + bx + c = 0")
     print("For example, x2 + 6x + 8 = 0")
-    print("Note: DONT USE BRACKETS\n")
-
+    print("Note: DONT USE BRACKETS")
 
 def take_input():
     """
@@ -17,8 +16,14 @@ def take_input():
     """
     # Take the equation and method of solution as input from user
     eq = input("Enter your Equation: ")
-    print("Specify your method by which you want to solve your equation.\n1. 'quad' for Quadratic formula method\n2. 'midd' for Middle term break method\n3. 'sqre' for Completing square method")
-    method = input("Enter you Method: ")
+
+    # Take the method of solving the equation
+    methods = {'quad': "Quadratic Formula Method", 'midd': "Middle Term Break Method", 'sqre': "Completing Squares Method"}
+    print("Specify your method by which you want to solve your equation.")
+    for short in methods:
+        print(f"'{short}' for '{methods[short]}'")
+    inp = input("Enter you Method: ")
+    method = methods[inp]
 
     # Conditions for input to be valid
 
@@ -80,37 +85,40 @@ class Quadratic_equation(object):
             print("ax2 + bx + c = 0")
         return a, b, c
 
-    def print_coefficients(self):
+    def print_coefficients_and_equation(self):
         """
         This method prints out the coefficients and constant in the equation.
         """
         a, b, c = self.constants()
+        print("\n"+"-"*30+f"{self.method}")
         print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
+        print(f"{a}{variable}2 ") # TODO: complete this function to print pretty formatted equation
 
     def quad_method(self):
         """
         This method tries to solve the equation using Quadratic Formula Method.
         """
-        pass
+        self.print_coefficients_and_equation()
 
     def midd_method(self):
         """
         This method tries to solve the equation using Middle Term Break Method.
         """
         '√'
-        pass
+        self.print_coefficients_and_equation()
 
     def sqre_method(self):
         """
         This method tries to solve the equation using Completing Squares Method.
         """
-        pass
+        self.print_coefficients_and_equation()
 
     def solve(self):
         """
         Solve the quadratic equation with the specified method.
         """
-        pass
+        print("\n\nSOLUTION:")
+
         # if self.method == 'quad':
         #     quad_method()
         # elif self.method == 'midd':
