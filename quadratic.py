@@ -1,6 +1,7 @@
 import sys
 from math import gcd
 
+
 def print_info():
     """
     Print out the basic information for the user to use the program.
@@ -10,6 +11,7 @@ def print_info():
     print("For example, x2 + 6x + 8 = 0")
     print("Note: DONT USE BRACKETS")
 
+
 def take_input():
     """
     Take the equation and the method of solution as input and check if the input is valid.
@@ -18,7 +20,9 @@ def take_input():
     eq = input("Enter your Equation: ")
 
     # Take the method of solving the equation
-    methods = {'quad': "Quadratic Formula Method", 'midd': "Middle Term Break Method", 'sqre': "Completing Squares Method"}
+    methods = {'quad': "Quadratic Formula Method",
+               'midd': "Middle Term Break Method",
+               'sqre': "Completing Squares Method"}
     print("Specify your method by which you want to solve your equation.")
     for short in methods:
         print(f"'{short}' for '{methods[short]}'")
@@ -50,6 +54,7 @@ def take_input():
 
     return eq, variable, method
 
+
 class Quadratic_equation(object):
     """docstring for Quadratic."""
 
@@ -58,31 +63,41 @@ class Quadratic_equation(object):
         self.variable = variable
         self.method = method
 
+    def move_to_left(self, rhs):
+        for t in rhs:
+            if t == '+':
+                pass
+        # TODO: complete this function
+
     def constants(self):
         """
         Take an equation of form: ax2 + bx + c = 0 and return the constants.
         Parameter: Equation
         Return: a, b, c
         """
+        # TODO: Update this function to also solve equations with '-' sign.
+
+        # split the equation in right hand side and left hand side
         lhs, rhs = self.equation.split('=')
-        if rhs.strip() == '0':
-            vals = lhs.split('+')
-            for x in vals:
-                if 'x2' in x.strip():
-                    if len(x.strip()) == 2:
-                        a = 1
-                    else:
-                        a = int(x[:x.index('x2')])
-                elif 'x' in x.strip():
-                    if len(x.strip()) == 1:
-                        b = 1
-                    else:
-                        b = int(x[:x.index('x')])
-                elif x.strip().isnumeric():
-                    c = int(x)
-        else:
-            print("Please type equation in the form:")
-            print("ax2 + bx + c = 0")
+
+        if rhs.strip() != '0':
+            move_to_left(rhs)
+        vals = lhs.split('+')
+
+        for x in vals:
+            if 'x2' in x.strip():
+                if len(x.strip()) == 2:
+                    a = 1
+                else:
+                    a = int(x[:x.index('x2')])
+            elif 'x' in x.strip():
+                if len(x.strip()) == 1:
+                    b = 1
+                else:
+                    b = int(x[:x.index('x')])
+            elif x.strip().isnumeric():
+                c = int(x)
+
         return a, b, c
 
     def print_coefficients_and_equation(self):
@@ -92,7 +107,7 @@ class Quadratic_equation(object):
         a, b, c = self.constants()
         print("\n"+"-"*30+f"{self.method}")
         print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
-        print(f"{a}{variable}2 ") # TODO: complete this function to print pretty formatted equation
+        print(f"{a}{variable}2 ")  # TODO: complete this function to print pretty formatted equation
 
     def quad_method(self):
         """
@@ -125,6 +140,7 @@ class Quadratic_equation(object):
         #     midd_method()
         # elif self.method == 'sqre':
         #     sqre_method()
+
 
 def main():
     print_info()
