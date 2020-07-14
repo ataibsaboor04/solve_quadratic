@@ -14,7 +14,8 @@ def print_info():
 
 def take_input():
     """
-    Take the equation and the method of solution as input and check if the input is valid.
+    Take the equation and the method of solution as input and check if the input
+    is valid.
     """
     # Take the equation and method of solution as input from user
     eq = input("Enter your Equation: ")
@@ -26,7 +27,9 @@ def take_input():
     print("Specify your method by which you want to solve your equation.")
     for short in methods:
         print(f"'{short}' for '{methods[short]}'")
-    inp = input("Enter you Method: ")
+    inp = ""
+    while inp not in methods:
+        inp = input("Enter your Method: ")
     method = methods[inp]
 
     # Conditions for input to be valid
@@ -48,7 +51,7 @@ def take_input():
 
     # check if its a equation
     if '+' not in eq and '-' not in eq:
-        print("\nENTER A VALID QUADRATIC EQUATION!!")
+        print("\nENTER A VALID QUADRATIC EQUATION!!\n")
         print_info()
         take_input()
 
@@ -62,8 +65,62 @@ class Quadratic_equation(object):
         self.equation = equation
         self.variable = variable
         self.method = method
+        self.lhs, self.rhs = self.equation.strip().split('=')
 
-    def move_to_left(self, rhs):
+    def separate_pos_n_neg_vals(self, eq):
+        """
+        Separate positive and negative values in an equation.
+        Parameters: One side of the equation.
+        Returns: Lists of positive and negative values.
+        """
+        # TODO: Complete separate_pos_n_neg_vals function
+        all_values = []
+        for val in eq.split('+'):
+            if '-' in val:
+                lst = val.split('-')
+                all_values += [v.strip() for v in lst]
+            else:
+                all_values += [val.strip()]
+
+        # sort the values of all_values
+        for val in all_values:
+            if f"{self.variable}2" in val:
+                _1st_term = val
+            elif f"{self.variable}" in val:
+                _2nd_term = val
+            elif val.isnumeric():
+                _last_term = val
+        # TODO: solve this try except block error and test it.
+        try:
+            all_values = [_1st_term, _2nd_term, _last_term]
+        except:
+            all_values = [_1st_term, _2nd_term]
+        else:
+            all_values = [_1st_term, _2nd_term]
+        finally:
+            if len(all_values) > 3 or len(all_values) < 2:
+                print("\nENTER SIMPLIFIED AND VALID EQUATION\n")
+                main()
+
+        positive_values = []
+        negative_values = []
+
+        # check if first value is positive or negative
+        if eq.strip()[0] == '-':
+            self.move_to_left()
+
+        positive_values.append(all_values[0])
+        for val in all_values[1:]:
+            ind = self.equation.index()
+            for c in self.equation[ind::-1]:
+                if c == '+':
+                    positive_values.append(val)
+                elif c == '-':
+                    negative_values.append(val)
+
+        return all_values, positive_values, negative_values
+
+    def move_to_left(self):
         for t in rhs:
             if t == '+':
                 pass
@@ -72,16 +129,16 @@ class Quadratic_equation(object):
     def constants(self):
         """
         Take an equation of form: ax2 + bx + c = 0 and return the constants.
-        Parameter: Equation
-        Return: a, b, c
+        Parameters: Equation
+        Returns: a, b, c
         """
         # TODO: Update this function to also solve equations with '-' sign.
 
         # split the equation in right hand side and left hand side
-        lhs, rhs = self.equation.split('=')
 
         if rhs.strip() != '0':
             move_to_left(rhs)
+
         vals = lhs.split('+')
 
         for x in vals:
@@ -107,19 +164,20 @@ class Quadratic_equation(object):
         a, b, c = self.constants()
         print("\n"+"-"*30+f"{self.method}")
         print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
-        print(f"{a}{variable}2 ")  # TODO: complete this function to print pretty formatted equation
+        # self.equation = f"{a}{variable}2 "
+        # TODO: complete this function to print pretty formatted equation
 
     def quad_method(self):
         """
         This method tries to solve the equation using Quadratic Formula Method.
         """
+        '√'
         self.print_coefficients_and_equation()
 
     def midd_method(self):
         """
         This method tries to solve the equation using Middle Term Break Method.
         """
-        '√'
         self.print_coefficients_and_equation()
 
     def sqre_method(self):
@@ -142,16 +200,32 @@ class Quadratic_equation(object):
         #     sqre_method()
 
 
+# def main():
+#     print_info()
+#     intention = 'y'
+#     while intention.lower().strip() == 'y':
+#         eq, var, method = take_input()
+#         equation = Quadratic_equation(eq, var, method)
+#         equation.separate_pos_n_neg_vals(equation.lhs)
+#         equation.solve()
+#         print("\nEnter 'y' to solve another, or 'q' for quit.")
+#         intention = input("y/q: ")
+#         if intention != 'y' and intention != 'q':
+#             intention = input("'y' for yes 'q' for quit: ")
+#     sys.exit()
+
 def main():
     print_info()
     intention = 'y'
     while intention.lower().strip() == 'y':
-        print()
         eq, var, method = take_input()
         equation = Quadratic_equation(eq, var, method)
+        print(equation.separate_pos_n_neg_vals(equation.lhs))
         equation.solve()
         print("\nEnter 'y' to solve another, or 'q' for quit.")
         intention = input("y/q: ")
+        if intention != 'y' and intention != 'q':
+            intention = input("'y' for yes 'q' for quit: ")
     sys.exit()
 
 
