@@ -106,19 +106,14 @@ class Quadratic_equation(object):
             main()
 
         # sort the values of all_values
-        values = sort_vals(all_values)
+        values = self.sort_vals(all_values)
 
         positive_values = []
         negative_values = []
 
-        # check if first value is positive or negative
-        # if eq.strip()[0] == '-':
-        #     self.move_to_left()
-        # positive_values.append(values[0])
-        # TODO: Use the move_to_left function
-
         equ = self.equation[self.equation.index(values[0])+len(values[0])-1:]
 
+        # separate positive and negative values
         for val in values[1:]:
             ind = equ.index(val)
             for i in range(ind, 0, -1):
@@ -141,10 +136,39 @@ class Quadratic_equation(object):
         ar, pr, nr = separate_pos_n_neg_vals(self.rhs)
         al, pl, nl = separate_pos_n_neg_vals(self.lhs)
 
-        values = list(set(ar+al))
+        values = self.sort_vals(list(ar+al))
+        positive_values = self.sort_vals(list(pl+nr))
+        negative_values = self.sort_vals(list(nl+pr))
 
-        return values
+        return values, positive_values, negative_values
         # TODO: complete this function
+
+    def vals_with_signs(self, values, positive_values, negative_values):
+        """
+        Create list of values with there respective signs.
+        """
+        sign_values = [values[0]]
+        for val in values[1:]:
+            if val in positive_values:
+                sign_values.append(' +' + val)
+            elif val in negative_values:
+                sign_values.append(' -' + val)
+            else:
+                print("Something went wrong on line no. 163")
+
+        return sign_values
+
+    def correct_the_equation(self):
+        """
+        Correct the equation if its not in the correct syntax
+        """
+
+        if self.equation.strip()[0] == '-':
+            sign_values = vals_with_signs(self.move_to_left())
+        else:
+            sign_values = vals_with_signs(separate_pos_n_neg_vals(self.lhs)) + " = 0"
+        self.equation = sign_values.join("") + " = 0"
+        self.lhs, self.rhs = self.equation.strip().split('=')
 
     def constants(self):
         """
@@ -156,10 +180,11 @@ class Quadratic_equation(object):
 
         # split the equation in right hand side and left hand side
 
-        if rhs.strip() != '0':
-            move_to_left(rhs)
+        # if self.rhs.strip() != '0':
+        #     move_to_left(rhs)
 
-        vals = lhs.split('+')
+        self.correct_the_equation()
+        vals = self.lhs.split('+')
 
         for x in vals:
             if 'x2' in x.strip():
@@ -182,7 +207,7 @@ class Quadratic_equation(object):
         This method prints out the coefficients and constant in the equation.
         """
         a, b, c = self.constants()
-        print("\n"+"-"*30+f"{self.method}")
+        print(self.equation)
         print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
         # self.equation = f"{a}{variable}2 "
         # TODO: complete this function to print pretty formatted equation
@@ -211,7 +236,7 @@ class Quadratic_equation(object):
         Solve the quadratic equation with the specified method.
         """
         print("\n\nSOLUTION:")
-
+        self.print_coefficients_and_equation()
         # if self.method == 'quad':
         #     quad_method()
         # elif self.method == 'midd':
@@ -240,7 +265,6 @@ def main():
     while intention.lower().strip() == 'y':
         eq, var, method = take_input()
         equation = Quadratic_equation(eq, var, method)
-        print(equation.separate_pos_n_neg_vals(equation.lhs))
         equation.solve()
         print("\nEnter 'y' to solve another, or 'q' for quit.")
         intention = input("y/q: ")
