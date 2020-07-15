@@ -49,7 +49,7 @@ def take_input():
             print("\nENTER A QUADRATIC EQUATION!!")
             take_input()
 
-    # check if its a equation
+    # check if its an equation
     if '+' not in eq and '-' not in eq:
         print("\nENTER A VALID QUADRATIC EQUATION!!\n")
         print_info()
@@ -59,7 +59,10 @@ def take_input():
 
 
 class Quadratic_equation(object):
-    """docstring for Quadratic."""
+    """
+    Solve Quadratic Equations by creating the instance of this class as
+    quadratic equation and use its method named solve.
+    """
 
     def __init__(self, equation, variable, method):
         self.equation = equation
@@ -67,13 +70,29 @@ class Quadratic_equation(object):
         self.method = method
         self.lhs, self.rhs = self.equation.strip().split('=')
 
+    def sort_vals(self, lst_vals):
+        """
+        Sorts the list of values in an equation.
+        Parameters: List of values
+        Returns: Sorted list of values
+        """
+        values = []
+        for val in lst_vals:
+            if f"{self.variable}2" in val:
+                values.insert(0, val)
+            elif f"{self.variable}" in val:
+                values.insert(1, val)
+            elif val.isnumeric():
+                values.insert(2, val)
+        return values
+
     def separate_pos_n_neg_vals(self, eq):
         """
         Separate positive and negative values in an equation.
         Parameters: One side of the equation.
-        Returns: Lists of positive and negative values.
+        Returns: Three Lists of all values, positive values and negative values.
         """
-        # TODO: Complete separate_pos_n_neg_vals function
+
         all_values = []
         for val in eq.split('+'):
             if '-' in val:
@@ -82,48 +101,49 @@ class Quadratic_equation(object):
             else:
                 all_values += [val.strip()]
 
+        if len(all_values) > 3 or len(all_values) < 2:
+            print("\nENTER SIMPLIFIED AND VALID EQUATION\n")
+            main()
+
         # sort the values of all_values
-        for val in all_values:
-            if f"{self.variable}2" in val:
-                _1st_term = val
-            elif f"{self.variable}" in val:
-                _2nd_term = val
-            elif val.isnumeric():
-                _last_term = val
-        # TODO: solve this try except block error and test it.
-        try:
-            all_values = [_1st_term, _2nd_term, _last_term]
-        except:
-            all_values = [_1st_term, _2nd_term]
-        else:
-            all_values = [_1st_term, _2nd_term]
-        finally:
-            if len(all_values) > 3 or len(all_values) < 2:
-                print("\nENTER SIMPLIFIED AND VALID EQUATION\n")
-                main()
+        values = sort_vals(all_values)
 
         positive_values = []
         negative_values = []
 
         # check if first value is positive or negative
-        if eq.strip()[0] == '-':
-            self.move_to_left()
+        # if eq.strip()[0] == '-':
+        #     self.move_to_left()
+        # positive_values.append(values[0])
+        # TODO: Use the move_to_left function
 
-        positive_values.append(all_values[0])
-        for val in all_values[1:]:
-            ind = self.equation.index()
-            for c in self.equation[ind::-1]:
+        equ = self.equation[self.equation.index(values[0])+len(values[0])-1:]
+
+        for val in values[1:]:
+            ind = equ.index(val)
+            for i in range(ind, 0, -1):
+                c = equ[i]
                 if c == '+':
                     positive_values.append(val)
+                    break
                 elif c == '-':
+                    print(val)
                     negative_values.append(val)
+                    break
 
-        return all_values, positive_values, negative_values
+        return values, positive_values, negative_values
 
     def move_to_left(self):
-        for t in rhs:
-            if t == '+':
-                pass
+        """
+        If the equation has values on the right hand side it moves them to the left hand side
+
+        """
+        ar, pr, nr = separate_pos_n_neg_vals(self.rhs)
+        al, pl, nl = separate_pos_n_neg_vals(self.lhs)
+
+        values = list(set(ar+al))
+
+        return values
         # TODO: complete this function
 
     def constants(self):
