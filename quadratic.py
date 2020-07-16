@@ -210,7 +210,8 @@ class Quadratic_equation(object):
         """
         print('\n'+self.equation)
         a, b, c = self.constants()
-        print(f"The coefficient of x2 is {a}\nThe coefficient of x is {b}\nThe constant is {c}")
+        print(
+            f"\nThe coefficient of {self.variable}2 is {a}\nThe coefficient of {self.variable} is {b}\nThe constant is {c}")
 
     def quad_method(self):
         """
