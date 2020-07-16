@@ -191,6 +191,7 @@ class Quadratic_equation(object):
         self.correct_the_equation()
         a, p, n = self.separate_pos_n_neg_vals(self.lhs)
         sign_values = self.vals_with_signs(a, p, n)
+        a, b, c = 0, 0, 0
         for val in sign_values:
             if f"{self.variable}2" in val:
                 v = val[:val.index(self.variable)]
