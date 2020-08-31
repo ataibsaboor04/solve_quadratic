@@ -1,280 +1,270 @@
 import sys
-from math import gcd
-
-
-def print_info():
-    """
-    Print out the basic information for the user to use the program.
-    """
-    print("Solve your quadratic equation easily.")
-    print("Write equation of form: ax2 +bx +c = 0")
-    print("For example, x2 +6x +8 = 0")
-    print("Note: DONT USE BRACKETS\n")
+import math
+import sympy
+from sympy import pretty_print as pprint
 
 
 def take_input():
-    """
-    Take the equation and the method of solution as input and check if the input
-    is valid.
-    """
-    # Take the equation and method of solution as input from user
-    eq = input("Enter your Equation: ")
+    print("Enter the variable, coefficients and the constant.")
+    v = input("variable: ")
+    a = int(input("a = "))
+    b = int(input("b = "))
+    c = int(input("c = "))
+    if a < 0:
+        return -a, -b, -c, v
+    elif a == 0:
+        print("Its not a quadratic equation.")
+        sys.exit()
+    return a, b, c, v
 
-    # Take the method of solving the equation
+
+def take_solution_method():
     methods = {'quad': "Quadratic Formula Method",
                'midd': "Middle Term Break Method",
                'sqre': "Completing Squares Method"}
     print("\nSpecify your method by which you want to solve your equation.")
+    # print available methods
     for short in methods:
         print(f"'{short}' for '{methods[short]}'")
     method = ""
     while method not in methods:
-        method = input("\nEnter your Method: ")
-
-    # Conditions for input to be valid
-
-    # check for brackets in the equation
-    if "(" in eq or "{" in eq or "[" in eq:
-        print("\nDON'T USE BRACKETS!!")
-        take_input()
-
-    # check if equation has more than one variable
-    for i in eq:
-        if i.isalpha():
-            variable = i
-            break
-    for i in eq:
-        if i.isalpha() and variable != i:
-            print("\nENTER A QUADRATIC EQUATION!!")
-            take_input()
-
-    # check if its an equation
-    if ('+' not in eq and '-' not in eq) or '=' not in eq:
-        print("\nENTER A VALID QUADRATIC EQUATION!!\n")
-        print_info()
-        take_input()
-
-    return eq, variable, method
+        method = input("\nMethod: ")
+    return method
 
 
-class Quadratic_equation(object):
+def firststring(f, var=""):
+    if f > 0:
+        fstr = f"{f}{var}"
+        if f == 1:
+            fstr = f"{var}"
+    elif f < 0:
+        fstr = f"- {-f}{var}"
+        if f == -1:
+            fstr = f"- {var}"
+    return fstr
+
+
+def astring(a, var):
+    if a == 1:
+        astr = f"{var}2"
+    else:
+        astr = f"{a}{var}2"
+    return astr
+
+
+def bstring(b, var):
+    if b > 0:
+        bstr = f"+ {b}{var}"
+        if b == 1:
+            bstr = f"+ {var}"
+    elif b < 0:
+        bstr = f"- {-b}{var}"
+        if b == -1:
+            bstr = f"- {var}"
+    else:
+        bstr = "\b"
+    return bstr
+
+
+def cstring(c):
+    if c > 0:
+        cstr = f"+ {c}"
+
+    elif c < 0:
+        cstr = f"- {-c}"
+
+    else:
+        cstr = "\b"
+    return cstr
+
+
+def make_strings(a, b, c, var):
+    astr = astring(a, var)
+    bstr = bstring(b, var)
+    cstr = cstring(c)
+    return astr, bstr, cstr
+
+
+def print_equation(a, b, c, var):
+    astr, bstr, cstr = make_strings(a, b, c, var)
+    print(astr, bstr, cstr, "= 0")
+
+
+def split_middle_term(a, b, c):
+    for i in range(50):
+        for j in range(20):
+            if i*j == abs(a*c):
+                if b > 0 and c > 0:
+                    if i+j == b:
+                        return i, j
+                    # elif i-j == b:
+                    #     return i, -j
+                    # elif j-i == b:
+                    #     return -i, j
+                elif b < 0 and c < 0:
+                    if i-j == b:
+                        return i, -j
+                    elif j-i == b:
+                        return -i, j
+                elif b > 0 and c < 0:
+                    if i-j == b:
+                        return i, -j
+                    elif j-i == b:
+                        return -i, j
+                elif b < 0 and c > 0:
+                    if -i-j == b:
+                        return -i, -j
+                    elif i+j == b:
+                        return i, j
+    return False
+
+
+def take_common(p, q):
+    common = math.gcd(p, q)
+    p = int(p/common)
+    q = int(q/common)
+    if p < 0:
+        return -common, -p, -q
+    return common, p, q
+
+
+def quad_method(a, b, c, var):
     """
-    Solve Quadratic Equations by creating the instance of this class as
-    quadratic equation and use its method named solve.
+    This method tries to solve the equation using Quadratic Formula Method.
     """
+    """     √ chr(8730s)
+            ± chr(177)
+    """
+    print("-"*50 + "\nQuadratic Formula Method\n" + "-"*50)
+    print_equation(a, b, c, var)
 
-    def __init__(self, equation, variable, method):
-        self.equation = equation
-        self.variable = variable
-        self.method = method
-        self.lhs, self.rhs = self.equation.strip().split('=')
+    # Quadratic Formula
+    # aq, bq, cq = sympy.symbols('a b c')
+    # pprint((-bq + - sympy.sqrt(bq**2 - 4aq cq))/2aq))
 
-    def sort_vals(self, lst_vals):
-        """
-        Sorts the list of values in an equation.
-        Parameters: List of values
-        Returns: Sorted list of values
-        """
-        values = []
-        for val in lst_vals:
-            if f"{self.variable}2" in val:
-                values.insert(0, val)
-            elif f"{self.variable}" in val:
-                values.insert(1, val)
-            elif val.isnumeric():
-                values.insert(2, val)
-        return values
 
-    def separate_pos_n_neg_vals(self, eq):
-        """
-        Separate positive and negative values in an equation.
-        Parameters: One side of the equation.
-        Returns: Three Lists of all values, positive values and negative values.
-        """
+def midd_method(a, b, c, var):
+    """
+    This method tries to solve the equation using Middle Term Break Method.
+    """
+    print("-"*50 + "\nMiddle Term Break Method\n" + "-"*50)
 
-        all_values = []
-        for val in eq.split('+'):
-            if '-' in val:
-                lst = val.split('-')
-                all_values += [v.strip() for v in lst]
-            else:
-                all_values += [val.strip()]
+    astr, bstr, cstr = make_strings(a, b, c, var)
 
-        if len(all_values) > 3 or len(all_values) < 2:
-            print("\nENTER SIMPLIFIED AND VALID EQUATION\n")
-            main()
+    print()
+    print_equation(a, b, c, var)
 
-        # sort the values of all_values
-        values = self.sort_vals(all_values)
+    # a2 + 2ab + b2 = (a+b)2
+    if c > 0:
+        if int(2*math.sqrt(a)*math.sqrt(c)) == b:
+            print()
+            s, t = '-', '\b'
+            if b > 0:
+                s, t = '+', '-'
+            ar, cr = firststring(int(math.sqrt(a)), var), int(math.sqrt(c))
+            print(f"({ar})2 {s} 2({ar})({cr}) + ({cr})2 = 0")
+            print()
+            print(f"({ar} {s} {cr})2 = 0")
+            print()
+            print(" "*3, "Taking Root On Both Sides")
+            print()
+            print(f"{ar} {s} {cr} = 0")
+            print()
+            print(f"{ar} = {t} {cr}")
 
-        positive_values = []
-        negative_values = []
-
-        equ = self.equation[self.equation.index(values[0])+len(values[0])-1:]
-
-        # separate positive and negative values
-        for val in values[1:]:
-            ind = equ.index(val)
-            for i in range(ind, 0, -1):
-                c = equ[i]
-                if c == '+':
-                    positive_values.append(val)
-                    break
-                elif c == '-':
-                    negative_values.append(val)
-                    break
-
-        return values, positive_values, negative_values
-
-    def move_to_left(self):
-        """
-        If the equation has values on the right hand side it moves them to the left hand side
-
-        """
-        ar, pr, nr = separate_pos_n_neg_vals(self.rhs)
-        al, pl, nl = separate_pos_n_neg_vals(self.lhs)
-
-        values = self.sort_vals(list(ar+al))
-        positive_values = self.sort_vals(list(pl+nr))
-        negative_values = self.sort_vals(list(nl+pr))
-
-        return values, positive_values, negative_values
-
-    def vals_with_signs(self, values, positive_values, negative_values):
-        """
-        Create list of values with there respective signs.
-        """
-        sign_values = [values[0]]
-        for val in values[1:]:
-            if val in positive_values:
-                sign_values.append(' +' + val)
-            elif val in negative_values:
-                sign_values.append(' -' + val)
-            else:
-                print("Something went wrong on line no. 163")
+            if int(math.sqrt(a)) == 1:
                 sys.exit()
-        return sign_values
-
-    def correct_the_equation(self):
-        """
-        Correct the equation if its not in the correct syntax
-        """
-
-        if self.equation.strip()[0] == '-':
-            sign_values = self.vals_with_signs(self.move_to_left())
-        else:
-            a, p, n = self.separate_pos_n_neg_vals(self.lhs)
-            sign_values = self.vals_with_signs(a, p, n)
-        self.equation = "".join(sign_values) + " = 0"
-        self.lhs, self.rhs = self.equation.strip().split('=')
-
-    def find_cons_int(self, v):
-        """
-        """
-        if v.strip() == '+' or v == '':
-            v = 1
-        elif v.strip() == '-':
-            v = -1
-        else:
-            v = int(v)
-
-        return v
-
-    def constants(self):
-        """
-        Take an equation of form: ax2 +bx +c = 0 and return the constants.
-        Parameters: Equation
-        Returns: a, b, c
-        """
-        # TODO: Update this function to also solve equations with '-' sign.
-
-        self.correct_the_equation()
-        a, p, n = self.separate_pos_n_neg_vals(self.lhs)
-        sign_values = self.vals_with_signs(a, p, n)
-        a, b, c = 0, 0, 0
-        for val in sign_values:
-            if f"{self.variable}2" in val:
-                v = val[:val.index(self.variable)]
-                a = self.find_cons_int(v)
-            elif f"{self.variable}" in val:
-                v = val[:val.index(self.variable)]
-                b = self.find_cons_int(v)
             else:
-                c = self.find_cons_int(val)
-        # TODO: correct the return if there are only two variables in equation
-        return a, b, c
+                print()
+                print(f"{var} = {t} {cr}/{int(math.sqrt(a))}")
+                sys.exit()
 
-    def print_coefficients_and_equation(self):
-        """
-        This method prints out the coefficients and constant in the equation.
-        """
-        print('\n'+self.equation)
-        a, b, c = self.constants()
-        print(
-            f"\nThe coefficient of {self.variable}2 is {a}\nThe coefficient of {self.variable} is {b}\nThe constant is {c}")
+    # Split middle Term
+    if split_middle_term(a, b, c) is False:
+        print("Can't break the middle term.")
+        sys.exit()
+    b1, b2 = split_middle_term(a, b, c)
+    b1str, b2str = bstring(b1, var), bstring(b2, var)
 
-    def quad_method(self):
-        """
-        This method tries to solve the equation using Quadratic Formula Method.
-        """
-        '√'
-        print("-"*50 + "\nQuadratic Formula Method\n" + "-"*50)
-        self.print_coefficients_and_equation()
+    # Step 1
+    print()
+    print(astr, b1str, b2str, cstr, "= 0")
 
-    def midd_method(self):
-        """
-        This method tries to solve the equation using Middle Term Break Method.
-        """
-        print("-"*50 + "\nMiddle Term Break Method\n" + "-"*50)
-        self.print_coefficients_and_equation()
+    # Step 2
+    print()
+    common1, acommon, b1common = take_common(a, b1)
+    common1str, acommonstr, b1commonstr = firststring(
+        common1, var), firststring(acommon, var), cstring(b1common)
+    common2, b2common, ccommon = take_common(b2, c)
+    common2str, b2commonstr, ccommonstr = cstring(
+        common2), firststring(b2common, var), cstring(ccommon)
+    print(f"{common1str}({acommonstr} {b1commonstr})",
+          f"{common2str}({b2commonstr} {ccommonstr})", "= 0")
+    if f"({acommonstr} {b1commonstr})" != f"({b2commonstr} {ccommonstr})":
+        print("Can't solve by Middle Term Break Method")
+        sys.exit()
 
-    def sqre_method(self):
-        """
-        This method tries to solve the equation using Completing Squares Method.
-        """
-        print("-"*50 + "\nCompleting Squares Method\n" + "-"*50)
-        self.print_coefficients_and_equation()
+    # Step 3
+    print()
+    print(f"({acommonstr} {b1commonstr}).({common1str} {common2str})", "= 0")
 
-    def solve(self):
-        """
-        Solve the quadratic equation with the specified method.
-        """
-        print("\n\nSOLUTION:\n")
-        if self.method == 'quad':
-            self.quad_method()
-        elif self.method == 'midd':
-            self.midd_method()
-        elif self.method == 'sqre':
-            self.sqre_method()
+    # Step 4
+    print()
+    print("Either".rjust(12), end="")
+    print("Or".rjust(28))
+    print()
+    print(" "*3, f"{acommonstr} {b1commonstr} = 0".ljust(30), end="")
+    print(f"{common1str} {common2str} = 0")
 
-# def main():
-#     print_info()
-#     intention = 'y'
-#     while intention.lower().strip() == 'y':
-#         eq, var, method = take_input()
-#         equation = Quadratic_equation(eq, var, method)
-#         equation.separate_pos_n_neg_vals(equation.lhs)
-#         equation.solve()
-#         print("\nEnter 'y' to solve another, or 'q' for quit.")
-#         intention = input("y/q: ")
-#         if intention != 'y' and intention != 'q':
-#             intention = input("'y' for yes 'q' for quit: ")
-#     sys.exit()
+    # Step 5
+    print()
+    b1commonstr, common2str = firststring(-b1common), firststring(-common2)
+    print(" "*3, f"{acommonstr} = {b1commonstr}".ljust(30), end="")
+    print(f"{common1str} = {common2str}")
+    if acommon == 1 and common1 == 1:
+        sys.exit()
+
+    # Step 6
+    print()
+    if acommon == 1:
+        s = ""
+    else:
+        s = f"/{acommon}"
+    if common1 == 1:
+        t = ""
+    else:
+        t = f"/{common1}"
+
+    print(" "*3, f"x = {b1commonstr}{s}".ljust(30), end="")
+    print(f"x = {common2str}{t}")
 
 
-def main():
-    print_info()
-    intention = 'y'
-    while intention.lower().strip() == 'y':
-        eq, var, method = take_input()
-        equation = Quadratic_equation(eq, var, method)
-        equation.solve()
-        print("\nEnter 'y' to solve another, or 'q' for quit.")
-        intention = input("y/q: ")
-        if intention != 'y' and intention != 'q':
-            intention = input("'y' for yes 'q' for quit: ")
-    sys.exit()
+def sqre_method(a, b, c, var):
+    """
+    This method tries to solve the equation using Completing Squares Method.
+    """
+    print("-"*50 + "\nCompleting Squares Method\n" + "-"*50)
+
+    astr, bstr, cstr = make_strings(a, b, c, var)
+
+    print()
+    print_equation(a, b, c, var, '= 0')
+
+
+def solve():
+    """
+    Solve the quadratic equation with the specified method.
+    """
+    a, b, c, var = take_input()
+    method = take_solution_method()
+    print("\n\nSOLUTION:\n")
+    if method == 'quad':
+        quad_method(a, b, c, var)
+    elif method == 'midd':
+        midd_method(a, b, c, var)
+    elif method == 'sqre':
+        sqre_method(a, b, c, var)
 
 
 if __name__ == '__main__':
-    main()
+    solve()
