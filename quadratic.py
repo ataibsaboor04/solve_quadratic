@@ -33,6 +33,8 @@ def take_solution_method():
 
 
 def firststring(f, var=""):
+    if var=="":
+        return f
     if f > 0:
         fstr = f"{f}{var}"
         if f == 1:
@@ -235,8 +237,8 @@ def midd_method(a, b, c, var):
     else:
         t = f"/{common1}"
 
-    print(" "*3, f"x = {b1commonstr}{s}".ljust(30), end="")
-    print(f"x = {common2str}{t}")
+    print(" "*3, f"{var} = {b1commonstr}{s}".ljust(30), end="")
+    print(f"{var} = {common2str}{t}")
 
 
 def sqre_method(a, b, c, var):
