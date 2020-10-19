@@ -7,4 +7,10 @@ class TestSplitMiddleTerm(unittest.TestCase):
         expected = 2, 4
         self.assertEqual(split_middle_term(a, b, c), expected)
 
+    def test_one(self):
+        a, b, c = 3, 5, 2
+        expected = 2, 3
+        self.assertEqual(split_middle_term(a, b, c), expected)
+
+
 unittest.main()
